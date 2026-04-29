@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Avaliação Feedback 360° - Instituto Impulso IE™ de Liderança</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.4.0/purify.min.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg1: #0b4aa2; --bg2: #062b62; --surface: #f4f9ff; --card: #ffffff;
+      --text: #0f172a; --muted: #475569; --primary: #0b63ce; --primary2: #084aa0;
+      --accent: #38bdf8;
+      --c1: #cc0000; --c2: #d97706; --c3: #005ce6; --c4: #00994d;
+      --c5: #7c3aed; --c6: #db2777; --c7: #0891b2; --c8: #ea580c;
+      --shadow: 0 14px 34px rgba(2,32,71,.18);
+      --shadow2: 0 8px 20px rgba(2,32,71,.12);
+      --radius: 18px; --radius2: 14px;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0; font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(56,189,248,.35), transparent 55%),
+        radial-gradient(900px 600px at 85% 15%, rgba(255,215,0,.10), transparent 60%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
+      color: var(--text); line-height: 1.7; padding: 18px;
+    }
+    .shell {
+      max-width: 1200px; margin: 0 auto;
+      background: linear-gradient(180deg, rgba(244,249,255,.97), rgba(244,249,255,.94));
+      border: 1px solid rgba(56,189,248,.35); border-radius: var(--radius);
+      box-shadow: var(--shadow); overflow: hidden; position: relative;
+    }
+    .shell::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px;
+      background: linear-gradient(90deg, var(--c1), var(--c2), var(--c3), var(--c4), var(--c5), var(--c6), var(--c7), var(--c8));
+    }
+    .wrap { padding: 26px; }
+    .header { text-align: center; padding: 6px 0 14px; margin-bottom: 14px; border-bottom: 1px solid rgba(11,99,206,.08); }
+    .main-title { margin: 0; font-family: Arial, sans-serif; font-size: 19px; font-weight: normal; color: #64748b; letter-spacing: 0.12em; text-transform: uppercase; line-height: 1.2; }
+    .tagline { margin: 6px 0 0; font-weight: 700; color: var(--primary); font-size: 15px; font-family: Arial, sans-serif; line-height: 1.25; }
+    .sub-title { margin: 0; font-family: Arial, sans-serif; font-size: 35px; line-height: 1.15; color: #063b7a; font-weight: normal; letter-spacing: -0.01em; }
+    .header-desc { margin: 12px auto 0; max-width: 80ch; color: var(--muted); font-size: 15px; font-weight: normal; }
+    .step { display: none; }
+    .step.active { display: block; animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .card { background: var(--card); border: 1px solid rgba(207,230,255,.95); border-radius: var(--radius2); box-shadow: var(--shadow2); padding: 18px; }
+    .instructions {
+      background: linear-gradient(180deg, rgba(56,189,248,.14), rgba(56,189,248,.08));
+      border: 1px solid rgba(56,189,248,.25); border-left: 6px solid var(--accent);
+      border-radius: var(--radius2); padding: 16px; margin: 14px 0 18px; color: var(--text);
+    }
+    .instructions p, .instructions li { margin: 0 0 10px; font-size: 15px; color: var(--text); text-align: justify; }
+    .instructions ul { margin: 8px 0 0 0; padding-left: 18px; }
+    .anonymity-badge {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff; padding: 14px 18px; border-radius: 12px;
+      text-align: center; font-weight: 800; font-family: Arial, sans-serif;
+      margin: 14px 0; box-shadow: 0 8px 18px rgba(16,185,129,.22);
+    }
+    .anonymity-badge strong { font-size: 16px; }
+    .anonymity-badge p { margin: 4px 0 0; font-size: 13px; opacity: .92; font-weight: 600; }
+    .leader-info-box {
+      background: linear-gradient(135deg, #063b7a, #0b63ce);
+      color: #fff; padding: 22px; border-radius: 16px; text-align: center;
+      margin: 14px 0; box-shadow: var(--shadow);
+    }
+    .leader-info-box .label { font-size: 12px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; opacity: .85; font-family: Arial, sans-serif; }
+    .leader-info-box .name { font-size: 26px; font-weight: 900; margin: 6px 0 4px; font-family: Arial, sans-serif; }
+    .leader-info-box .role { font-size: 14px; opacity: .9; }
+    .relations-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 18px 0; }
+    @media (max-width: 720px) { .relations-grid { grid-template-columns: 1fr; } }
+    .relation-option {
+      background: #fff; border: 2.5px solid #d5e6fb; border-radius: 16px;
+      padding: 22px 16px; text-align: center; cursor: pointer;
+      transition: all .2s ease; box-shadow: var(--shadow2);
+    }
+    .relation-option:hover { transform: translateY(-3px); box-shadow: 0 16px 28px rgba(2,32,71,.14); border-color: var(--accent); }
+    .relation-option.selected {
+      background: linear-gradient(135deg, var(--primary), var(--primary2));
+      color: #fff; border-color: var(--primary2); box-shadow: 0 14px 24px rgba(11,99,206,.30);
+    }
+    .relation-option .icon { font-size: 38px; margin-bottom: 8px; }
+    .relation-option .title { font-size: 18px; font-weight: 900; font-family: Arial, sans-serif; margin-bottom: 4px; }
+    .relation-option .desc { font-size: 13px; opacity: .85; }
+    .code-input-card {
+      background: #fff; border: 1px solid #d5e6fb; border-radius: 16px;
+      padding: 26px; max-width: 480px; margin: 0 auto; text-align: center; box-shadow: var(--shadow2);
+    }
+    .form-group label { display: block; font-weight: 800; color: #063b7a; margin-bottom: 8px; font-size: 15px; font-family: Arial, sans-serif; }
+    .field { position: relative; }
+    .field svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: #64748b; z-index: 2; pointer-events: none; }
+    .field input, .field select {
+      width: 100%; padding: 14px 14px 14px 44px; border: 1.5px solid rgba(11,99,206,.28);
+      border-radius: 12px; font-size: 16px; background: #fff; outline: none;
+      transition: box-shadow .2s ease, border-color .2s ease; font-family: 'Poppins', sans-serif;
+    }
+    .field input:focus, .field select:focus { border-color: rgba(11,99,206,.55); box-shadow: 0 0 0 4px rgba(56,189,248,.22); }
+    .input-error { border-color: #dc2626 !important; background: #fef2f2 !important; }
+    .field-error { color: #dc2626; font-size: 12px; font-weight: 700; font-family: Arial, sans-serif; display: block; margin-top: 4px; }
+    .topbar { display: flex; flex-wrap: wrap; gap: 10px 12px; align-items: center; justify-content: space-between; margin: 10px 0 12px; }
+    .counter { font-weight: 800; color: #0b2a52; font-size: 14px; font-family: Arial, sans-serif; }
+    .progress-meta { font-weight: 700; color: var(--muted); font-size: 13px; font-family: Arial, sans-serif; }
+    .progress-bar { width: 100%; background: #e6eefc; border-radius: 999px; overflow: hidden; height: 12px; border: 1px solid rgba(11,99,206,.12); }
+    .progress-fill { height: 100%; width: 0%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--primary)); transition: width .35s ease-in-out; }
+    .question-card { margin-top: 12px; padding: 30px; }
+    .question-competence { text-align: center; font-size: 12px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; color: var(--primary); margin-bottom: 8px; font-family: Arial, sans-serif; }
+    .question-title { margin: 0 0 10px; font-size: 22px; font-weight: 700; color: #0f172a; text-align: center; min-height: 72px; display: flex; align-items: center; justify-content: center; line-height: 1.45; }
+    .question-helper { text-align: center; color: #64748b; font-size: 13px; font-weight: 700; margin-top: -2px; margin-bottom: 18px; font-family: Arial, sans-serif; }
+    .options { display: flex; flex-wrap: wrap; justify-content: center; align-items: stretch; gap: 10px; margin-top: 8px; }
+    .opt { border: 1.5px solid rgba(11,99,206,.22); background: rgba(11,99,206,.06); border-radius: 14px; padding: 12px 14px; cursor: pointer; user-select: none; transition: all .15s ease; min-height: 88px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; font-weight: 700; color: #0b2a52; font-size: 13px; flex: 0 1 calc(20% - 10px); max-width: 190px; min-width: 135px; line-height: 1.25; gap: 4px; }
+    .opt-num { font-size: 24px; font-weight: 900; font-family: Arial, sans-serif; line-height: 1; }
+    .opt small { font-size: 13px; color: inherit; font-weight: 800; line-height: 1.25; font-family: Arial, sans-serif; }
+    @media (max-width: 880px) { .opt { flex: 0 1 calc(50% - 10px); min-width: 145px; } }
+    @media (max-width: 460px) { .opt { flex: 0 1 100%; max-width: 100%; min-width: 0; } }
+    .opt:hover { transform: translateY(-2px); box-shadow: 0 12px 18px rgba(2,32,71,.10); border-color: rgba(56,189,248,.55); }
+    .opt.selected { background: linear-gradient(45deg, var(--primary), var(--primary2)); border-color: rgba(11,99,206,.55); color: #fff; box-shadow: 0 14px 22px rgba(11,99,206,.22); font-weight: 700; font-family: Arial, sans-serif; }
+    .nav { display: flex; gap: 10px; justify-content: space-between; margin-top: 18px; flex-wrap: wrap; }
+    .btn { appearance: none; border: none; cursor: pointer; border-radius: 14px; padding: 12px 16px; font-size: 14px; font-weight: 800; transition: all .2s ease; display: inline-flex; align-items: center; gap: 10px; font-family: Arial, sans-serif; }
+    .btn-primary { background: linear-gradient(45deg, var(--primary), var(--primary2)); color: #fff; box-shadow: 0 10px 18px rgba(11,99,206,.22); }
+    .btn-primary:hover { transform: translateY(-1px); filter: saturate(1.05); box-shadow: 0 14px 26px rgba(11,99,206,.30); }
+    .btn-ghost { background: #fff; color: #0b2a52; border: 1.5px solid rgba(11,99,206,.22); box-shadow: 0 8px 16px rgba(2,32,71,.08); text-decoration: none; }
+    .btn-ghost:hover { transform: translateY(-1px); border-color: rgba(56,189,248,.55); }
+    .btn:disabled { opacity: .55; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+    .success-box {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff; padding: 32px; border-radius: 18px; text-align: center;
+      margin: 20px 0; box-shadow: 0 18px 32px rgba(16,185,129,.30);
+    }
+    .success-box .icon { font-size: 60px; margin-bottom: 10px; }
+    .success-box h2 { font-size: 26px; font-weight: 900; margin: 0 0 10px; font-family: Arial, sans-serif; }
+    .success-box p { font-size: 15px; margin: 6px 0; opacity: .95; }
+    .error-box {
+      background: #fef2f2; border: 2px solid #dc2626; color: #991b1b;
+      padding: 22px; border-radius: 14px; text-align: center; margin: 20px 0;
+    }
+    .error-box .icon { font-size: 40px; margin-bottom: 8px; }
+    .error-box h3 { margin: 0 0 8px; font-family: Arial, sans-serif; font-weight: 900; }
+    .footer { margin-top: 20px; text-align: center; color: var(--muted); font-size: 12px; font-weight: 700; font-family: Arial, sans-serif; }
+    .signature { text-align: center; color: var(--muted); font-size: 12px; font-weight: 700; font-family: Arial, sans-serif; margin-top: 10px; }
+    .status { font-family: Arial, sans-serif; font-weight: bold; min-height: 22px; margin-top: 8px; text-align: center; }
+    .status-success { color: #10b981; } .status-error { color: #ef4444; } .status-pending { color: #f59e0b; }
+    .loading-spinner {
+      display: inline-block; width: 20px; height: 20px;
+      border: 3px solid rgba(11,99,206,.2); border-top-color: var(--primary);
+      border-radius: 50%; animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="wrap">
+
+      <div class="header">
+        <p class="main-title">Instituto Impulso IE™ de Liderança</p>
+        <p class="tagline">A mudança pode acontecer em um instante</p>
+        <h1 class="sub-title">Avaliação Feedback 360°</h1>
+        <p class="header-desc">Sua percepção é fundamental para o desenvolvimento desta liderança. Responda com sinceridade — sua identidade permanece <strong>100% anônima</strong>.</p>
+      </div>
+
+      <!-- ETAPA 0: VALIDAÇÃO DO CÓDIGO -->
+      <section id="step-validate" class="step active">
+        <div class="instructions">
+          <p><strong>Bem-vindo(a) à Avaliação Feedback 360°.</strong></p>
+          <p>Você foi convidado(a) a oferecer um feedback estruturado sobre uma liderança que você conhece. A sua voz tem o poder de transformar esta liderança e impactar todo o futuro ao redor dela. Todo Feedback é, sem dúvida, um presente, uma pérola, uma chave para quem deseja evoluir e alcançar uma performance melhor. Fale com o coração, com verdade e sem receios. Esta é uma oportunidade valiosa de contribuir com o desenvolvimento profissional desta pessoa.</p>
+          <p>📌 <strong>Importante: Sua identidade está 100% protegida e anônima. </strong> A sua participação é essencial!</p>
+          <p>Para começar, informe o <strong>código de avaliação</strong> que você recebeu (formato: <code>LDR-XXXXX</code>):</p>
+        </div>
+
+        <div class="code-input-card">
+          <div class="form-group">
+            <label for="leader-code-input">Código do Líder *</label>
+            <div class="field">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+              <input type="text" id="leader-code-input" placeholder="LDR-XXXXX" style="text-transform:uppercase; letter-spacing:.15em; font-weight:900; text-align:center;" maxlength="9" />
+            </div>
+            <span id="code-error" class="field-error"></span>
+          </div>
+
+          <button class="btn btn-primary" onclick="validateLeaderCode()" style="width:100%; justify-content:center; padding:14px; font-size:16px; margin-top:8px;">
+            Validar Código
+          </button>
+
+          <p style="margin-top:14px; font-size:12px; color:#64748b;">
+            🔒 Sua resposta é protegida e anônima. Seus dados pessoais não serão compartilhados com a pessoa avaliada.
+          </p>
+        </div>
+      </section>
+
+      <!-- ETAPA 1: VÍNCULO -->
+      <section id="step-relation" class="step">
+        <div class="leader-info-box">
+          <div class="label">Você está avaliando</div>
+          <div class="name" id="leader-name-display">---</div>
+          <div class="role" id="leader-role-display">---</div>
+        </div>
+
+        <div class="anonymity-badge">
+          <strong>🔒 Avaliação 100% Anônima</strong>
+          <p>Suas respostas serão consolidadas com as de outros avaliadores. A pessoa avaliada nunca saberá o que você respondeu individualmente.</p>
+        </div>
+
+        <div class="card" style="padding: 28px;">
+          <h3 style="margin:0 0 8px; color:#063b7a; font-family:Arial,sans-serif; font-size:20px; font-weight:900; text-align:center;">Qual é a sua relação com esta pessoa?</h3>
+          <p style="text-align:center; color:#64748b; font-size:14px; margin:0 0 16px;">Selecione a opção que melhor descreve seu vínculo profissional.</p>
+
+          <div class="relations-grid">
+            <div class="relation-option" data-relation="superior" onclick="selectRelation('superior')">
+              <div class="icon">⬆️</div>
+              <div class="title">Superior</div>
+              <div class="desc">Esta pessoa se reporta a mim (eu sou o(a) gestor(a) dela).</div>
+            </div>
+            <div class="relation-option" data-relation="peer" onclick="selectRelation('peer')">
+              <div class="icon">↔️</div>
+              <div class="title">Par / Colega</div>
+              <div class="desc">Trabalhamos no mesmo nível hierárquico ou em áreas que se relacionam.</div>
+            </div>
+            <div class="relation-option" data-relation="subordinate" onclick="selectRelation('subordinate')">
+              <div class="icon">⬇️</div>
+              <div class="title">Liderado(a)</div>
+              <div class="desc">Esta pessoa é meu(minha) gestor(a) (eu me reporto a ela).</div>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top:18px;">
+            <label for="time-knowing">Há quanto tempo você convive profissionalmente com esta pessoa? *</label>
+            <div class="field">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <select id="time-knowing">
+                <option value="">Selecione...</option>
+                <option value="Menos de 6 meses">Menos de 6 meses</option>
+                <option value="6 meses a 1 ano">6 meses a 1 ano</option>
+                <option value="1 a 3 anos">1 a 3 anos</option>
+                <option value="3 a 5 anos">3 a 5 anos</option>
+                <option value="Mais de 5 anos">Mais de 5 anos</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="nav" style="justify-content:center; margin-top:24px;">
+            <button id="btn-start-eval" class="btn btn-primary" onclick="startEvaluation()" style="width:100%; max-width:380px; justify-content:center; padding:14px; font-size:16px;" disabled>
+              Iniciar Avaliação
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ETAPA 2: AVALIAÇÃO -->
+      <section id="step-quiz" class="step">
+        <div class="topbar">
+          <div class="counter">Pergunta <span id="q-current">1</span> de 48</div>
+          <div class="progress-meta"><span id="answered-count">0</span>/48 respondidas</div>
+        </div>
+
+        <div class="progress-bar">
+          <div id="progress-fill" class="progress-fill"></div>
+        </div>
+
+        <div class="card question-card">
+          <p id="question-competence" class="question-competence"></p>
+          <p id="question-text" class="question-title"></p>
+          <p class="question-helper">Avalie com que frequência esta pessoa demonstra esse comportamento.</p>
+          <div id="options" class="options"></div>
+          <div class="nav">
+            <button id="btn-prev" class="btn btn-ghost" type="button" onclick="goPrev()">Anterior</button>
+            <button id="btn-next" class="btn btn-primary" type="button" onclick="goNext()">Próxima</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ETAPA 3: COMENTÁRIOS -->
+      <section id="step-comments" class="step">
+        <div class="instructions">
+          <p><strong>Reflexão final.</strong></p>
+          <p>Para enriquecer o relatório desta liderança, responda 3 perguntas abertas. Suas respostas serão apresentadas de forma <strong>anônima e agrupada</strong> com os demais avaliadores.</p>
+        </div>
+
+        <div class="card" style="padding: 28px;">
+          <div class="form-group" style="margin-bottom:20px;">
+            <label for="q-strengths">Quais são as 3 maiores forças desta pessoa como líder? *</label>
+            <textarea id="q-strengths" rows="4" placeholder="Descreva as principais forças observadas..." style="width:100%; padding:14px; border:1.5px solid rgba(11,99,206,.28); border-radius:12px; font-size:15px; font-family:'Poppins',sans-serif; resize:vertical;"></textarea>
+          </div>
+
+          <div class="form-group" style="margin-bottom:20px;">
+            <label for="q-improvements">Quais áreas você sugere que ela mais precise desenvolver? *</label>
+            <textarea id="q-improvements" rows="4" placeholder="Sugestões construtivas de desenvolvimento..." style="width:100%; padding:14px; border:1.5px solid rgba(11,99,206,.28); border-radius:12px; font-size:15px; font-family:'Poppins',sans-serif; resize:vertical;"></textarea>
+          </div>
+
+          <div class="form-group" style="margin-bottom:20px;">
+            <label for="q-impact">Que impacto positivo esta pessoa gera ao seu redor? *</label>
+            <textarea id="q-impact" rows="4" placeholder="Descreva o impacto que ela cria nas pessoas e nos resultados..." style="width:100%; padding:14px; border:1.5px solid rgba(11,99,206,.28); border-radius:12px; font-size:15px; font-family:'Poppins',sans-serif; resize:vertical;"></textarea>
+          </div>
+
+          <div class="anonymity-badge" style="margin-top:14px;">
+            <strong>🔒 Lembrete: Você está protegido(a) pelo anonimato.</strong>
+            <p>Seja honesto(a). Feedback genuíno é o maior presente que você pode oferecer a esta liderança.</p>
+          </div>
+
+          <div class="nav">
+            <button class="btn btn-ghost" type="button" onclick="showStep('step-quiz')">Voltar</button>
+            <button id="btn-submit" class="btn btn-primary" type="button" onclick="submitEvaluation()">Enviar Avaliação</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ETAPA 4: SUCESSO -->
+      <section id="step-success" class="step">
+        <div class="success-box">
+          <div class="icon">✅</div>
+          <h2>Avaliação Enviada com Sucesso!</h2>
+          <p>Obrigado por dedicar seu tempo a este processo de desenvolvimento.</p>
+          <p>Sua resposta foi registrada de forma anônima e contribuirá para um relatório executivo poderoso.</p>
+        </div>
+
+        <div class="card" style="text-align:center; padding:24px;">
+          <h3 style="color:#063b7a; font-family:Arial,sans-serif; font-size:18px; font-weight:900; margin:0 0 10px;">🌟 O Poder do Feedback 360°</h3>
+          <p style="color:#475569; font-size:14px; margin:0;">
+            Você acabou de contribuir para uma das ferramentas de desenvolvimento mais poderosas que existem. Quando uma liderança recebe feedback honesto de múltiplas perspectivas, ela ganha clareza, evolui mais rápido e impacta positivamente todas as pessoas ao redor.
+          </p>
+        </div>
+
+        <p class="signature">Rogério Braga - impulsoflow@gmail.com</p>
+        <p class="footer">Instituto Impulso IE™ de Liderança | Avaliação Leadership 360°</p>
+      </section>
+
+      <!-- ETAPA ERRO -->
+      <section id="step-error" class="step">
+        <div class="error-box">
+          <div class="icon">⚠️</div>
+          <h3 id="error-title">Erro</h3>
+          <p id="error-message">Ocorreu um erro inesperado.</p>
+          <button class="btn btn-ghost" onclick="showStep('step-validate')" style="margin-top:14px;">Tentar Novamente</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+<script>
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwIO50W8lle8NPpbwjl2mktvIwpaMatAwomce7gD4h5qVgStsWcXmnIYimNY7EM2_GQ/exec";
+const API_KEY = "2026Impulso360$";
+const competencies = [
+  { id: 'C1', name: 'Visão e Direção Estratégica', color: '#cc0000' },
+  { id: 'C2', name: 'Execução e Foco em Resultados', color: '#d97706' },
+  { id: 'C3', name: 'Desenvolvimento de Pessoas', color: '#005ce6' },
+  { id: 'C4', name: 'Inteligência Emocional', color: '#00994d' },
+  { id: 'C5', name: 'Comunicação e Influência', color: '#7c3aed' },
+  { id: 'C6', name: 'Tomada de Decisão', color: '#db2777' },
+  { id: 'C7', name: 'Colaboração e Construção de Times', color: '#0891b2' },
+  { id: 'C8', name: 'Adaptabilidade e Inovação', color: '#ea580c' }
+];
+
+const questions = [
+  { c: 'C1', t: 'Comunica com clareza a visão e os objetivos de longo prazo da equipe.' },
+  { c: 'C1', t: 'Conecta as tarefas do dia a dia ao propósito maior da organização.' },
+  { c: 'C1', t: 'Antecipa tendências e cenários que podem impactar a área.' },
+  { c: 'C1', t: 'Define prioridades estratégicas com base em dados e contexto de mercado.' },
+  { c: 'C1', t: 'Inspira a equipe com uma direção clara e um futuro ambicioso.' },
+  { c: 'C1', t: 'Alinha metas individuais aos objetivos estratégicos da empresa.' },
+  { c: 'C2', t: 'Cobra responsabilidade pelos resultados sem comprometer o respeito.' },
+  { c: 'C2', t: 'Estabelece metas desafiadoras e mensuráveis para a equipe.' },
+  { c: 'C2', t: 'Acompanha indicadores de performance com disciplina e regularidade.' },
+  { c: 'C2', t: 'Toma ações corretivas rápidas quando os resultados não saem como esperado.' },
+  { c: 'C2', t: 'Mantém o foco no que realmente importa, evitando dispersão.' },
+  { c: 'C2', t: 'Entrega com qualidade, mesmo sob prazos apertados e pressão.' },
+  { c: 'C3', t: 'Dedica tempo regular para coaching e desenvolvimento da equipe.' },
+  { c: 'C3', t: 'Fornece feedback construtivo de forma honesta e respeitosa.' },
+  { c: 'C3', t: 'Identifica e cultiva potenciais sucessores dentro do time.' },
+  { c: 'C3', t: 'Delega tarefas desafiadoras para promover o crescimento das pessoas.' },
+  { c: 'C3', t: 'Reconhece publicamente conquistas e esforços individuais.' },
+  { c: 'C3', t: 'Cria oportunidades reais de aprendizado para a equipe.' },
+  { c: 'C4', t: 'Mantém-se calmo(a) e centrado(a) em situações de alta pressão.' },
+  { c: 'C4', t: 'Tem consciência de como suas emoções afetam o time.' },
+  { c: 'C4', t: 'Demonstra empatia genuína pelos desafios pessoais e profissionais dos outros.' },
+  { c: 'C4', t: 'Lida com críticas e feedbacks negativos de forma madura.' },
+  { c: 'C4', t: 'Reconhece os próprios erros publicamente quando necessário.' },
+  { c: 'C4', t: 'Regula suas reações antes de responder a provocações ou conflitos.' },
+  { c: 'C5', t: 'Comunica ideias complexas de forma clara e acessível.' },
+  { c: 'C5', t: 'Pratica escuta ativa, sem interromper ou julgar prematuramente.' },
+  { c: 'C5', t: 'Adapta sua linguagem ao perfil de cada interlocutor.' },
+  { c: 'C5', t: 'Influencia decisões através de argumentos consistentes, não de imposição.' },
+  { c: 'C5', t: 'Mantém a equipe bem informada sobre o que importa.' },
+  { c: 'C5', t: 'Tem conversas difíceis com coragem e diplomacia.' },
+  { c: 'C6', t: 'Toma decisões em tempo hábil, mesmo com informação incompleta.' },
+  { c: 'C6', t: 'Baseia decisões em dados, fatos e análise crítica.' },
+  { c: 'C6', t: 'Considera múltiplas perspectivas antes de decidir questões complexas.' },
+  { c: 'C6', t: 'Assume a responsabilidade pelas consequências das próprias decisões.' },
+  { c: 'C6', t: 'Tem coragem para tomar decisões impopulares quando necessário.' },
+  { c: 'C6', t: 'Revisa decisões anteriores quando surgem novas evidências.' },
+  { c: 'C7', t: 'Constrói confiança através de coerência entre o que fala e faz.' },
+  { c: 'C7', t: 'Promove um ambiente de segurança psicológica no time.' },
+  { c: 'C7', t: 'Media conflitos com imparcialidade e foco em soluções.' },
+  { c: 'C7', t: 'Colabora de forma genuína com outras áreas e lideranças.' },
+  { c: 'C7', t: 'Valoriza a diversidade de opiniões e perfis na equipe.' },
+  { c: 'C7', t: 'Cria rituais de equipe que fortalecem vínculos e pertencimento.' },
+  { c: 'C8', t: 'Abraça mudanças com atitude positiva e resiliência.' },
+  { c: 'C8', t: 'Estimula a equipe a experimentar novas formas de fazer.' },
+  { c: 'C8', t: 'Aprende continuamente com erros, próprios e do time.' },
+  { c: 'C8', t: 'Questiona o status quo quando percebe oportunidades de melhoria.' },
+  { c: 'C8', t: 'Adapta sua estratégia rapidamente diante de novos cenários.' },
+  { c: 'C8', t: 'Promove uma cultura de inovação e melhoria contínua.' }
+];
+
+const TOTAL_Q = questions.length;
+const responses = new Array(TOTAL_Q).fill(null);
+let current = 0;
+let leaderCode = null;
+let leaderData = null;
+let selectedRelation = null;
+
+const scaleOptions = [
+  { num: 1, label: 'Nunca' }, { num: 2, label: 'Raramente' },
+  { num: 3, label: 'Às vezes' }, { num: 4, label: 'Frequentemente' },
+  { num: 5, label: 'Sempre' }
+];
+
+window.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const codeFromUrl = urlParams.get('codigo') || urlParams.get('code');
+  if (codeFromUrl) {
+    document.getElementById('leader-code-input').value = codeFromUrl.toUpperCase();
+    setTimeout(validateLeaderCode, 400);
+  }
+  document.getElementById('time-knowing').addEventListener('change', updateStartButton);
+});
+
+async function validateLeaderCode() {
+  const codeInput = document.getElementById('leader-code-input');
+  const code = codeInput.value.trim().toUpperCase();
+  const errorEl = document.getElementById('code-error');
+  errorEl.textContent = '';
+  if (!code || !/^LDR-[A-Z0-9]{5}$/.test(code)) {
+    errorEl.textContent = 'Formato inválido. Use o padrão LDR-XXXXX.';
+    codeInput.classList.add('input-error');
+    return;
+  }
+  codeInput.classList.remove('input-error');
+  codeInput.disabled = true;
+  const btn = document.querySelector('#step-validate button.btn-primary');
+  const originalText = btn.innerHTML;
+  btn.innerHTML = '<span class="loading-spinner"></span> Validando...';
+  btn.disabled = true;
+  try {
+    const url = `${WEB_APP_URL}?action=getLeader&apiKey=${encodeURIComponent(API_KEY)}&code=${encodeURIComponent(code)}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    if (data.ok && data.leader) {
+      leaderCode = code;
+      leaderData = data.leader;
+      document.getElementById('leader-name-display').textContent = data.leader.name;
+      document.getElementById('leader-role-display').textContent = `${data.leader.position} | ${data.leader.company}`;
+      showStep('step-relation');
+    } else {
+      errorEl.textContent = data.error || 'Código não encontrado. Verifique e tente novamente.';
+      codeInput.classList.add('input-error');
+      codeInput.disabled = false;
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+    }
+  } catch (err) {
+    console.error(err);
+    errorEl.textContent = 'Erro de conexão. Verifique sua internet e tente novamente.';
+    codeInput.disabled = false;
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+  }
+}
+
+function selectRelation(rel) {
+  selectedRelation = rel;
+  document.querySelectorAll('.relation-option').forEach(el => el.classList.remove('selected'));
+  document.querySelector(`.relation-option[data-relation="${rel}"]`).classList.add('selected');
+  updateStartButton();
+}
+
+function updateStartButton() {
+  const time = document.getElementById('time-knowing').value;
+  const btn = document.getElementById('btn-start-eval');
+  btn.disabled = !(selectedRelation && time);
+}
+
+function startEvaluation() {
+  current = 0;
+  showStep('step-quiz');
+  renderQuestion();
+}
+
+function showStep(stepId) {
+  document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
+  document.getElementById(stepId).classList.add("active");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function renderQuestion() {
+  const q = questions[current];
+  const comp = competencies.find(c => c.id === q.c);
+  document.getElementById("q-current").textContent = current + 1;
+  document.getElementById("question-competence").textContent = comp.name;
+  document.getElementById("question-competence").style.color = comp.color;
+  document.getElementById("question-text").textContent = q.t;
+  const optsContainer = document.getElementById("options");
+  optsContainer.innerHTML = "";
+  scaleOptions.forEach(opt => {
+    const btn = document.createElement("div");
+    btn.className = "opt" + (responses[current] === opt.num ? " selected" : "");
+    btn.innerHTML = `<div class="opt-num">${opt.num}</div><small>${opt.label}</small>`;
+    btn.onclick = () => selectOption(opt.num);
+    optsContainer.appendChild(btn);
+  });
+  updateProgress();
+  document.getElementById("btn-prev").disabled = current === 0;
+  document.getElementById("btn-next").textContent = current === TOTAL_Q - 1 ? "Concluir" : "Próxima";
+}
+
+function selectOption(value) {
+  responses[current] = value;
+  renderQuestion();
+  setTimeout(() => { if (current < TOTAL_Q - 1) goNext(); }, 280);
+}
+
+function goNext() {
+  if (responses[current] === null) { alert("Por favor, selecione uma resposta antes de prosseguir."); return; }
+  if (current < TOTAL_Q - 1) { current++; renderQuestion(); }
+  else { showStep("step-comments"); }
+}
+
+function goPrev() {
+  if (current > 0) { current--; renderQuestion(); }
+}
+
+function updateProgress() {
+  const answered = responses.filter(r => r !== null).length;
+  const pct = (answered / TOTAL_Q) * 100;
+  document.getElementById("progress-fill").style.width = pct + "%";
+  document.getElementById("answered-count").textContent = answered;
+}
+
+async function submitEvaluation() {
+  const strengths = document.getElementById("q-strengths").value.trim();
+  const improvements = document.getElementById("q-improvements").value.trim();
+  const impact = document.getElementById("q-impact").value.trim();
+  const timeKnowing = document.getElementById("time-knowing").value;
+  if (!strengths || !improvements || !impact) {
+    alert("Por favor, responda todas as 3 perguntas finais.");
+    return;
+  }
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="loading-spinner"></span> Enviando...';
+  const anonId = 'EV-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+  const payload = {
+    apiKey: API_KEY, action: "submitEvaluation", leaderCode: leaderCode,
+    timestamp: new Date().toISOString(),
+    evaluation: {
+      anonId, relation: selectedRelation, timeKnowing, responses,
+      strengths, improvements, impact
+    }
+  };
+  try {
+    await postToScript(payload);
+    showStep('step-success');
+  } catch (err) {
+    console.error(err);
+    document.getElementById('error-title').textContent = 'Erro ao Enviar';
+    document.getElementById('error-message').textContent = 'Não foi possível enviar sua avaliação. Verifique sua conexão e tente novamente.';
+    showStep('step-error');
+  }
+}
+
+async function postToScript(payload) {
+  const body = JSON.stringify(payload);
+  try {
+    if (navigator.sendBeacon) {
+      const ok = navigator.sendBeacon(WEB_APP_URL, new Blob([body], { type: 'text/plain;charset=utf-8' }));
+      if (ok) return { ok: true };
+    }
+  } catch (e) { console.warn("sendBeacon falhou:", e); }
+  await fetch(WEB_APP_URL, {
+    method: "POST", mode: "no-cors",
+    headers: { "Content-Type": "text/plain;charset=utf-8" }, body
+  });
+  return { ok: true };
+}
+</script>
+</body>
+</html>
