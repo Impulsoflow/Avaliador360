@@ -61,7 +61,7 @@
     .instructions p, .instructions li { margin: 0 0 10px; font-size: 15px; color: var(--text); text-align: justify; }
     .instructions ul { margin: 8px 0 0 0; padding-left: 18px; }
 
-    /* Banner informativo (NOVO) */
+    /* Banner informativo */
     .info-banner {
       background: linear-gradient(135deg, #0891b2, #0e7490);
       color: #fff; padding: 14px 18px; border-radius: 12px;
@@ -184,11 +184,18 @@
     .field input, .field select {
       width: 100%; padding: 14px 14px 14px 44px; border: 1.5px solid rgba(11,99,206,.28);
       border-radius: 12px; font-size: 16px; background: #fff; outline: none;
-      transition: box-shadow .2s ease, border-color .2s ease; font-family: 'Poppins', sans-serif;
+      transition: box-shadow .2s ease, border-color .2s ease, background .4s ease; font-family: 'Poppins', sans-serif;
     }
     .field input:focus, .field select:focus { border-color: rgba(11,99,206,.55); box-shadow: 0 0 0 4px rgba(56,189,248,.22); }
+    .field input.auto-filled { background: #ecfdf5 !important; border-color: #10b981 !important; }
     .input-error { border-color: #dc2626 !important; background: #fef2f2 !important; }
     .field-error { color: #dc2626; font-size: 12px; font-weight: 700; font-family: Arial, sans-serif; display: block; margin-top: 4px; }
+    .auto-fill-hint {
+      display: inline-block; margin-top: 8px; padding: 6px 12px;
+      background: #ecfdf5; color: #059669; border-radius: 999px;
+      font-size: 12px; font-weight: 700; font-family: Arial, sans-serif;
+      border: 1px solid #a7f3d0;
+    }
     .topbar { display: flex; flex-wrap: wrap; gap: 10px 12px; align-items: center; justify-content: space-between; margin: 10px 0 12px; }
     .counter { font-weight: 800; color: #0b2a52; font-size: 14px; font-family: Arial, sans-serif; }
     .progress-meta { font-weight: 700; color: var(--muted); font-size: 13px; font-family: Arial, sans-serif; }
@@ -237,25 +244,6 @@
       border-radius: 50%; animation: spin 0.8s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* Indicador de capacidade (NOVO) */
-    .capacity-indicator {
-      background: #fff; border: 1.5px solid #d5e6fb; border-radius: 12px;
-      padding: 14px; margin: 12px 0; text-align: center;
-    }
-    .capacity-bar {
-      width: 100%; height: 10px; background: #e6eefc; border-radius: 999px;
-      overflow: hidden; margin: 8px 0; border: 1px solid rgba(11,99,206,0.12);
-    }
-    .capacity-fill {
-      height: 100%; background: linear-gradient(90deg, #10b981, #0b63ce);
-      transition: width 0.6s ease;
-    }
-    .capacity-text {
-      font-size: 13px; color: #475569; font-weight: 700;
-      font-family: Arial, sans-serif;
-    }
-    .capacity-text strong { color: #0b63ce; }
   </style>
 </head>
 <body>
@@ -353,6 +341,7 @@
               <input type="text" id="leader-code-input" placeholder="LDR-XXXXX" style="text-transform:uppercase; letter-spacing:.15em; font-weight:900; text-align:center;" maxlength="9" />
             </div>
             <span id="code-error" class="field-error"></span>
+            <span id="auto-fill-indicator" class="auto-fill-hint" style="display:none;">✨ Código preenchido automaticamente pelo link</span>
           </div>
 
           <button class="btn btn-primary" onclick="validateLeaderCode()" style="width:100%; justify-content:center; padding:14px; font-size:16px; margin-top:8px;">
@@ -376,9 +365,6 @@
           <div class="name" id="leader-name-display">---</div>
           <div class="role" id="leader-role-display">---</div>
         </div>
-
-        <!-- Banner de capacidade (NOVO) -->
-        <div id="capacity-area"></div>
 
         <div class="anonymity-badge">
           <strong>🔒 Avaliação 100% Anônima</strong>
@@ -518,7 +504,7 @@
         </div>
       </section>
 
-      <!-- ETAPA AVALIAÇÃO ENCERRADA (NOVO) -->
+      <!-- ETAPA AVALIAÇÃO ENCERRADA -->
       <section id="step-closed" class="step">
         <div class="error-box" style="background:#f1f5f9; border-color:#94a3b8; color:#334155;">
           <div class="icon">🔒</div>
@@ -615,13 +601,53 @@ const scaleOptions = [
 ];
 
 window.addEventListener('DOMContentLoaded', () => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const codeFromUrl = urlParams.get('codigo') || urlParams.get('code');
-  if (codeFromUrl) {
-    document.getElementById('leader-code-input').value = codeFromUrl.toUpperCase();
-  }
+  // 🎯 Auto-preenche código vindo da URL (sem auto-validar — preserva tela de boas-vindas)
+  autoPreencherCodigoDaURL();
+
+  // Listener do tempo de convivência
   document.getElementById('time-knowing').addEventListener('change', updateStartButton);
 });
+
+// 🆕 Auto-preenchimento do código via URL (versão equilibrada)
+function autoPreencherCodigoDaURL() {
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const codeFromUrl = urlParams.get('codigo')
+                     || urlParams.get('code')
+                     || urlParams.get('c');
+
+    if (!codeFromUrl) return;
+
+    const codigoLimpo = String(codeFromUrl).trim().toUpperCase();
+
+    // Valida formato antes de prosseguir
+    if (!/^LDR-[A-Z0-9]{5}$/.test(codigoLimpo)) {
+      console.warn('⚠️ Código com formato inválido na URL:', codigoLimpo);
+      return;
+    }
+
+    const input = document.getElementById('leader-code-input');
+    if (!input) return;
+
+    // Preenche e marca visualmente
+    input.value = codigoLimpo;
+    input.classList.add('auto-filled');
+
+    // Mostra dica visual
+    const hint = document.getElementById('auto-fill-indicator');
+    if (hint) hint.style.display = 'inline-block';
+
+    // 🧹 Limpa a URL (estética + privacidade)
+    if (window.history && window.history.replaceState) {
+      const novaURL = window.location.origin + window.location.pathname;
+      window.history.replaceState({}, document.title, novaURL);
+    }
+
+    console.log('✅ Código auto-preenchido pela URL:', codigoLimpo);
+  } catch (err) {
+    console.error('❌ Erro ao auto-preencher código:', err);
+  }
+}
 
 // ✅ VALIDAÇÃO COM CHECAGEM DE STATUS E LIMITES
 async function validateLeaderCode() {
@@ -673,9 +699,6 @@ async function validateLeaderCode() {
       document.getElementById('leader-name-display').textContent = data.leader.name;
       document.getElementById('leader-role-display').textContent = `${data.leader.position} | ${data.leader.company}`;
 
-      // ✅ Renderiza indicador de capacidade
-      renderCapacityIndicator(currentCount);
-
       showStep('step-relation');
     } else {
       errorEl.textContent = data.error || 'Código não encontrado. Verifique e tente novamente.';
@@ -691,37 +714,6 @@ async function validateLeaderCode() {
     btn.innerHTML = originalText;
     btn.disabled = false;
   }
-}
-
-// ✅ NOVO: Indicador de capacidade
-function renderCapacityIndicator(currentCount) {
-  const area = document.getElementById('capacity-area');
-  const remaining = MAX_EVALUATORS - currentCount;
-  const pct = (currentCount / MAX_EVALUATORS) * 100;
-
-  let bannerHTML = '';
-  let extraInfo = '';
-
-  if (currentCount >= MIN_EVALUATORS) {
-    bannerHTML = `
-      <div class="info-banner">
-        ✨ Esta avaliação já tem <strong>${currentCount} respostas</strong>. Sua contribuição enriquecerá ainda mais o relatório!
-      </div>`;
-    extraInfo = `Restam <strong>${remaining} vagas</strong> de avaliadores.`;
-  } else {
-    extraInfo = `Faltam <strong>${MIN_EVALUATORS - currentCount}</strong> avaliações para liberar o relatório (mínimo: ${MIN_EVALUATORS}).`;
-  }
-
-  area.innerHTML = `
-    ${bannerHTML}
-     <div class="capacity-bar">
-        <div class="capacity-fill" style="width:${pct}%"></div>
-      </div>
-      <div class="capacity-text" style="font-size:12px; color:#64748b; font-weight:600;">
-        ${extraInfo}
-      </div>
-    </div>
-  `;
 }
 
 function selectRelation(rel) {
