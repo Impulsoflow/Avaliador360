@@ -714,11 +714,7 @@ function renderCapacityIndicator(currentCount) {
 
   area.innerHTML = `
     ${bannerHTML}
-    <div class="capacity-indicator">
-      <div class="capacity-text">
-        📊 Capacidade da avaliação: <strong>${currentCount}/${MAX_EVALUATORS}</strong> avaliadores
-      </div>
-      <div class="capacity-bar">
+     <div class="capacity-bar">
         <div class="capacity-fill" style="width:${pct}%"></div>
       </div>
       <div class="capacity-text" style="font-size:12px; color:#64748b; font-weight:600;">
